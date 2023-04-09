@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/bootcamp-go/desafio-go-web/cmd/server"
 	"os"
 	"strconv"
 
-	"github.com/bootcamp-go/desafio-go-web/cmd/server/router"
 	"github.com/bootcamp-go/desafio-go-web/internal/domain"
 	"github.com/gin-gonic/gin"
 )
@@ -14,16 +14,18 @@ import (
 func main() {
 
 	// Cargo csv.
-	list, err := LoadTicketsFromFile("../../tickets.csv")
+	list, err := LoadTicketsFromFile("tickets.csv")
 	if err != nil {
 		panic("Couldn't load tickets")
 	}
 
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
+	r := gin.New()
 
-	router := router.NewRouter(r, list)
+	router := server.NewRouter(r, &list)
 	router.MapRoutes()
+
+	fmt.Printf("Dirección en memoria desde main INICIADA %p\n", &list)
+	fmt.Printf("Dirección en memoria desde main TERMINADA\n")
 
 	if err := r.Run(); err != nil {
 		panic(err)
